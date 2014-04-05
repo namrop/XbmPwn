@@ -133,7 +133,6 @@ class xpwn(tk.Frame):
         u"--sout '#transcode{vcodec=mpv4, acodec=ogg}:standard{access=http,mux=ogg,dst=" + self.myip + \
     u"}'"
     print cmd
-    print correct_cmd
     thread = Thread(target=self.threadEx, args=(cmd, ))
     thread.start()
     client.stream()
