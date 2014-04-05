@@ -182,7 +182,7 @@ class xpwn(tk.Frame):
     self.exOsSys(cmd,"File")
   
   ####################################
-  # stream desktop image
+  # stream desktop visual
   def streamDesk(self):
     if self.debug==0:
       if self.state==1:
@@ -193,15 +193,19 @@ class xpwn(tk.Frame):
         return
     self.state = 1
     cmd = vlc_path
-    cmd += u" screen:// " 
+    cmd += u" screen:// "
+    cmd += u"-vvv "
     cmd += u":screen-fps=30 " 
     cmd += u":screen-caching=100 "
-    cmd += u"--sout=\"#transcode{vcodec=mpv4, acodec=ogg}:standard{access=http,mux=ogg,dst="
+    cmd += u"--sout=\"#"
+    cmd += "transcode{vcodec=mpv4, acodec=ogg}:"
+    cmd += "standard{access=http,mux=ogg,dst="
     cmd += self.myip
     cmd += u"}\""
     # Popen for windows, os.system for linux??
     if("Windows" in this_os):
-      self.exPopenDesk()
+      #self.exPopenDesk()
+      self.exOsSys(cmd,"Desktop")
       return
     else:
       self.exPopenDesk()
@@ -215,9 +219,13 @@ class xpwn(tk.Frame):
     array = []
     array.append(vlc_path)
     array.append("screen://")
+    array.append("-vvv")
     array.append(":screen-fps=30")
     array.append(":screen-caching=100")
-    array.append("--sout=\"#transcode{vcodec=mp4v, acodec=ogg}:standard{access=http,mux=ogg,dst=127.0.0.1:8080}\"")
+    sout = "--sout=\"#"
+    #sout += "transcode{vcodec=mp4v, acodec=ogg}:"
+    sout += "standard{access=http,mux=ogg,dst=127.0.0.1:8080}\""
+    array.append(sout)
     print array
     if("Windows" in this_os):
       os.chdir(vlc_extra_path)
@@ -255,6 +263,8 @@ class xpwn(tk.Frame):
     self.status_var.set("Streaming " + service + " (os)")
   #### thread helper for os.system execution
   def threadEx(self, cmd):
+    if "Windows" in this_os:
+      os.chdir(vlc_extra_path)
     os.system(cmd)
     self.status_var.set("Status: Idle")
     self.state = 0
