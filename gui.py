@@ -3,8 +3,9 @@ from tkFileDialog import askopenfilename
 import socket
 import os
 import subprocess
+from threading import Thread
 
-vlc_path="vlc"
+vlc_path=u"/usr/bin/vlc"
 
 class xpwn(tk.Frame):
   def __init__(self, parent):
@@ -12,7 +13,7 @@ class xpwn(tk.Frame):
     self.parent = parent
     self.initialize()
     #TODO set dst_ip correctly
-    self.dst_ip = "127.0.0.1:8080"
+    self.dst_ip = u"127.0.0.1:8080"
 
     #TODO connect
 
@@ -70,13 +71,19 @@ class xpwn(tk.Frame):
     os.system(cmd)
     #self.status_var.set("Status: streaming " + filename.split("/")[-1])
   def streamDesk(self):
-    cmd = vlc_path + " screen:// " + ":screen-fps=30 " + ":screen-caching=100 " + \
-    "--sout=\"#standard{access=http,mux=ogg,dst=" + str(self.dst_ip) + \
-    "}:transcode{vcodec=mpv4,acodec=ogg}\""
+    cmd = vlc_path + u" screen:// " + u":screen-fps=30 " + u":screen-caching=100 " + \
+    u"--sout=\"#standard{access=http,mux=ogg,dst=" + self.dst_ip + \
+    u"}:transcode{vcodec=mpv4,acodec=ogg}\""
     print "Command: " + str(cmd)
-    print "List: " + str(cmd.split())
-    subprocess.call(cmd.split())
-    subprocess.Popen(cmd.split())
+    thread = Thread(target=self.threadDesk, args=(cmd, ))
+    thread.start()
+    thread.join()
+    #print "List: " + str(cmd.split())
+    #subprocess.call(cmd.split())
+    #subprocess.Popen(cmd.split())
+    #os.system(cmd)
+  def threadDesk(self, cmd):
+    os.system(cmd)
   def streamWeb(self):
     pass
   def exit(self):
