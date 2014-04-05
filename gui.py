@@ -123,7 +123,7 @@ class xpwn(tk.Frame):
     print "Command: " + str(cmd)
     thread = Thread(target=self.threadExx, args=(cmd, ))
     thread.start()
-    client.stream()
+    self.client.stream()
     self.status_var.set("Streaming File...")
   def streamDesk(self):
     if self.state==1:
