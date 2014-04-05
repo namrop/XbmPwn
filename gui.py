@@ -28,12 +28,12 @@ class xpwn(tk.Frame):
     self.connected =0
     self.state = 0
     #TODO connect
-    try:
-      self.client = client.Client(self.dst_ip.split(":")[0],\
-          int(self.dst_ip.split(":")[1]))
-      self.connected = 1
-    except socket.error:
-      print "connection failed"
+#    try:
+#      self.client = client.Client(self.dst_ip.split(":")[0],\
+#          int(self.dst_ip.split(":")[1]))
+#      self.connected = 1
+#    except socket.error:
+#      print "connection failed"
 
     if self.connected == 1:
       self.client.handshake(self.vlcport)
@@ -113,7 +113,7 @@ class xpwn(tk.Frame):
     if self.state==1:
       print "can't stream!  stream already in progress"
       return
-    if self.connection == 0:
+    if self.connected == 0:
       print "can't stream!  connection not established"
       return
     filename = askopenfilename()
@@ -133,7 +133,7 @@ class xpwn(tk.Frame):
     if self.state==1:
       print "can't stream!  stream already in progress"
       return
-    if self.connection == 0:
+    if self.connected == 0:
       print "can't stream!  connection not established"
       return
     self.state = 1
@@ -154,7 +154,7 @@ class xpwn(tk.Frame):
     if self.state==1:
       print "can't stream!  stream already in progress"
       return
-    if self.connection == 0:
+    if self.connected == 0:
       print "can't stream!  connection not established"
       return
     self.state == 1
