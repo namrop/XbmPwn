@@ -31,5 +31,8 @@ class Client:
     self.socket.send("p")
 
   def quit(self):
-    self.socket.send("q")
+    try:
+      self.socket.send("q")
+    except:
+      print "COULDN'T SEND QUIT"
     self.socket.close()
