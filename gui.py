@@ -14,8 +14,12 @@ vlc_path=u"vlc"
 class xpwn(tk.Frame):
   def __init__(self, parent):
     tk.Frame.__init__(self, parent)
+
+    
     self.parent = parent
-    self.dst_ip = "127.0.0.1:8081"
+    #TODO scan for or prompt for this
+    self.dst_ip = "10.1.42.71:8081"
+    #TODO automatically get this
     self.myip = "10.0.2.15:8081"
     self.vlcport = 8080
     self.initialize()
