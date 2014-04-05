@@ -49,7 +49,7 @@ class xpwn(tk.Frame):
     self.ip_txt.grid(column=0, row=2, stick="EW", padx=px, pady=py)
 
     self.ip_str_var = tk.StringVar()
-    self.ip_str_var.set("192.168.1.1")
+    self.ip_str_var.set(self.dst_ip)
     self.ip_entr = tk.Entry(self, textvariable=self.ip_str_var, font=20)
     self.ip_entr.grid(column=1, row=2, stick="EW", padx=px, pady=py)
    
@@ -86,8 +86,8 @@ class xpwn(tk.Frame):
     if self.state == 1:
       print "Couldn't disconnect: stream in progress"
       return
-    self.ip = self.ip_entr.get()
-    print self.ip
+    self.dst_ip = self.ip_entr.get()
+    print self.dst_ip
     if self.connected == 0:
       try:
         self.client = client.Client(self.dst_ip.split(":")[0], \
