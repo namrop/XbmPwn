@@ -8,6 +8,8 @@ from threading import Thread
 import client
 
 vlc_path=u"vlc"
+#TODO check if file
+vlc_path=u"C:\Program Files (x86)\VideoLAN\VLC\vlc.exe"
 #correct_cmd = "vlc screen:// :screen-fps=30 :screen-caching=100 --sout '#transcode{vcodec=mp4v, acodec=ogg}:standard{access=http,mux=ogg,dst=127.0.0.1:8080}'"
 
 
@@ -18,9 +20,9 @@ class xpwn(tk.Frame):
     
     self.parent = parent
     #TODO scan for or prompt for this
-    self.dst_ip = "10.1.42.71:8081"
+    self.dst_ip = "192.168.1.10:8081"
     #TODO automatically get this
-    self.myip = "10.0.2.15:8081"
+    self.myip = "192.168.1.171:8081"
     self.vlcport = 8080
     self.initialize()
 
@@ -127,7 +129,7 @@ class xpwn(tk.Frame):
     print "Command: " + str(cmd)
     thread = Thread(target=self.threadExx, args=(cmd, ))
     thread.start()
-    client.stream()
+    self.client.stream()
     self.status_var.set("Streaming File...")
   def streamDesk(self):
     if self.state==1:
@@ -138,18 +140,18 @@ class xpwn(tk.Frame):
       return
     self.state = 1
     cmd = vlc_path + u" screen:// " + u":screen-fps=30 " + u":screen-caching=100 " + \
-        u"--sout '#transcode{vcodec=mpv4, acodec=ogg}:standard{access=http,mux=ogg,dst=" + self.myip + \
-    u"}'"
+        u"--sout=\"#transcode{vcodec=mpv4, acodec=ogg}:standard{access=http,mux=ogg,dst=" + self.myip + \
+    u"}\""
     print cmd
     thread = Thread(target=self.threadEx, args=(cmd, ))
     thread.start()
-    client.stream()
+    self.client.stream()
     self.status_var.set("Streaming Desktop...")
   def threadEx(self, cmd):
     os.system(cmd)
     self.status_var.set("Status: Idle")
     self.state = 0
-    client.stop()
+    self.client.stop()
   def streamWeb(self):
     if self.state==1:
       print "can't stream!  stream already in progress"
@@ -162,7 +164,7 @@ class xpwn(tk.Frame):
     if(url == ""):
       self.state = 0
       return
-    client.youtube_stream(url.split("=")[-1])
+    self.client.youtube_stream(url.split("=")[-1])
   def exit(self):
     exit(0)
 
