@@ -5,6 +5,7 @@ import socket
 import os
 import subprocess
 from threading import Thread
+import client
 
 vlc_path=u"vlc"
 #correct_cmd = "vlc screen:// :screen-fps=30 :screen-caching=100 --sout '#transcode{vcodec=mp4v, acodec=ogg}:standard{access=http,mux=ogg,dst=127.0.0.1:8080}'"
@@ -14,14 +15,20 @@ class xpwn(tk.Frame):
   def __init__(self, parent):
     tk.Frame.__init__(self, parent)
     self.parent = parent
+    self.dst_ip = "127.0.0.1:8081"
+    self.vlcport = 8080
     self.initialize()
-    #TODO set dst_ip correctly
-    self.dst_ip = u"127.0.0.1:8080"
-
-    #TODO connect
-    self.state = 0
 
   def initialize(self):
+    self.connected =0
+    #TODO connect
+    try:
+      self.client = client.Client(self.dst_ip.split(":")[0], self.dst_ip.split(":")[1])
+      self.connected = 1
+    except Exception socket.error:
+      print "connection failed"
+
+    self.client.handshake(self.vlcport)
     self.grid()
 
     px = 5
@@ -65,17 +72,30 @@ class xpwn(tk.Frame):
     self.pack()
   
   def setIP(self):
-    if self.state==1:
-      return
     self.ip = self.ip_entr.get()
-    #TODO connect
     print self.ip
+    if self.connected == 0:
+      try:
+        self.client = client.Client(self.dst_ip.split(":")[0], self.dst_ip.split(":")[1])
+        self.connected = 1
+      except Exception socket.error:
+        print "connection failed"
+    elif self.connected == 1:
+      self.client.quit()
+      try:
+        self.client = client.Client(self.dst_ip.split(":")[0], self.dst_ip.split(":")[1])
+        self.connected = 1
+      except Exception socket.error:
+        print "connection failed"
+        self.connected = 0
+  
   def streamFile(self):
     if self.state==1:
       return
     filename = askopenfilename()
-    if filename==None:
+    if filename==None or filename=="":
       return
+    print filename
     self.state = 1
     print "File: " + str(filename)
     cmd = vlc_path + " -vvv '" + filename + "' --sout=\"#standard{access=http,mux=ogg,dst=" + \
@@ -83,6 +103,7 @@ class xpwn(tk.Frame):
     print "Command: " + str(cmd)
     thread = Thread(target=self.threadExx, args=(cmd, ))
     thread.start()
+    client.stream()
     self.status_var.set("Streaming File...")
   def streamDesk(self):
     if self.state==1:
@@ -95,11 +116,13 @@ class xpwn(tk.Frame):
     print correct_cmd
     thread = Thread(target=self.threadEx, args=(cmd, ))
     thread.start()
+    client.stream()
     self.status_var.set("Streaming Desktop...")
   def threadEx(self, cmd):
     os.system(cmd)
     self.status_var.set("Status: Idle")
     self.state = 0
+    client.stop()
   def streamWeb(self):
     if self.state == 1:
       return
@@ -108,7 +131,7 @@ class xpwn(tk.Frame):
     if(url == ""):
       self.state = 0
       return
-    #TODO send url over socket
+    client.youtube_stream(url.split("=")[-1])
   def exit(self):
     exit(0)
 
