@@ -17,6 +17,8 @@ class xpwn(tk.Frame):
   def __init__(self, parent):
     tk.Frame.__init__(self, parent)
 
+    print socket.gethostbyname(socket.gethostname())
+    print [ip for ip in socket.gethostbyname_ex(socket.gethostname())[2] if not ip.startswith("127.")][:1]
     
     self.parent = parent
     #TODO scan for or prompt for this
@@ -39,6 +41,8 @@ class xpwn(tk.Frame):
 
     if self.connected == 1:
       self.client.handshake(self.vlcport)
+      print self.client.socket.getsockname()[0]
+
     self.grid()
 
     px = 5
