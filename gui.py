@@ -16,19 +16,23 @@ class xpwn(tk.Frame):
     tk.Frame.__init__(self, parent)
     self.parent = parent
     self.dst_ip = "127.0.0.1:8081"
+    self.myip = "10.0.2.15:8081"
     self.vlcport = 8080
     self.initialize()
 
   def initialize(self):
     self.connected =0
+    self.state = 0
     #TODO connect
     try:
-      self.client = client.Client(self.dst_ip.split(":")[0], self.dst_ip.split(":")[1])
+      self.client = client.Client(self.dst_ip.split(":")[0],\
+          int(self.dst_ip.split(":")[1]))
       self.connected = 1
-    except Exception socket.error:
+    except socket.error:
       print "connection failed"
 
-    self.client.handshake(self.vlcport)
+    if self.connected == 1:
+      self.client.handshake(self.vlcport)
     self.grid()
 
     px = 5
@@ -61,7 +65,10 @@ class xpwn(tk.Frame):
     self.exit.grid(column=1, row=6, columnspan=3, stick="EW", padx=px, pady=py)
 
     self.status_var = tk.StringVar()
-    self.status_var.set("Status: Connected, Idle")
+    if self.connected == 1:
+      self.status_var.set("Status: Connected, Idle")
+    elif self.connected == 0:
+      self.status_var.set("Status: Not Connected")
     self.status = tk.Label(self, textvariable=self.status_var, font=12)
     self.status.grid(column=0, row=7, columnspan=3, stick="EW", padx=px, pady=py)
 
@@ -72,22 +79,31 @@ class xpwn(tk.Frame):
     self.pack()
   
   def setIP(self):
+    if self.state == 1:
+      print "Couldn't disconnect: stream in progress"
+      return
     self.ip = self.ip_entr.get()
     print self.ip
     if self.connected == 0:
       try:
-        self.client = client.Client(self.dst_ip.split(":")[0], self.dst_ip.split(":")[1])
+        self.client = client.Client(self.dst_ip.split(":")[0], \
+            int(self.dst_ip.split(":")[1]))
         self.connected = 1
-      except Exception socket.error:
+      except socket.error:
         print "connection failed"
     elif self.connected == 1:
       self.client.quit()
       try:
-        self.client = client.Client(self.dst_ip.split(":")[0], self.dst_ip.split(":")[1])
+        self.client = client.Client(self.dst_ip.split(":")[0], \
+            int(self.dst_ip.split(":")[1]))
         self.connected = 1
-      except Exception socket.error:
+      except socket.error:
         print "connection failed"
         self.connected = 0
+    if self.connected == 0:
+      self.status_var.set("Disconnected")
+    else:
+      self.status_var.set("Connected, Idle")
   
   def streamFile(self):
     if self.state==1:
@@ -99,7 +115,7 @@ class xpwn(tk.Frame):
     self.state = 1
     print "File: " + str(filename)
     cmd = vlc_path + " -vvv '" + filename + "' --sout=\"#standard{access=http,mux=ogg,dst=" + \
-        str(self.dst_ip) + "}\""
+        str(self.myip) + "}\""
     print "Command: " + str(cmd)
     thread = Thread(target=self.threadExx, args=(cmd, ))
     thread.start()
@@ -110,7 +126,7 @@ class xpwn(tk.Frame):
       return
     self.state = 1
     cmd = vlc_path + u" screen:// " + u":screen-fps=30 " + u":screen-caching=100 " + \
-        u"--sout '#transcode{vcodec=mpv4, acodec=ogg}:standard{access=http,mux=ogg,dst=" + self.dst_ip + \
+        u"--sout '#transcode{vcodec=mpv4, acodec=ogg}:standard{access=http,mux=ogg,dst=" + self.myip + \
     u"}'"
     print cmd
     print correct_cmd

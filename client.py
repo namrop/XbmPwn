@@ -13,7 +13,7 @@ class Client:
       data = self.socket.recv(512)
       data.split()
       print data
-    except Exception socket.error:
+    except socket.error:
       print "Handshake error, exiting"
       self.socket.close()
       #assert int(data[1]) == port
