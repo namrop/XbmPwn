@@ -111,6 +111,10 @@ class xpwn(tk.Frame):
   
   def streamFile(self):
     if self.state==1:
+      print "can't stream!  stream already in progress"
+      return
+    if self.connection == 0:
+      print "can't stream!  connection not established"
       return
     filename = askopenfilename()
     if filename==None or filename=="":
@@ -127,6 +131,10 @@ class xpwn(tk.Frame):
     self.status_var.set("Streaming File...")
   def streamDesk(self):
     if self.state==1:
+      print "can't stream!  stream already in progress"
+      return
+    if self.connection == 0:
+      print "can't stream!  connection not established"
       return
     self.state = 1
     cmd = vlc_path + u" screen:// " + u":screen-fps=30 " + u":screen-caching=100 " + \
@@ -143,7 +151,11 @@ class xpwn(tk.Frame):
     self.state = 0
     client.stop()
   def streamWeb(self):
-    if self.state == 1:
+    if self.state==1:
+      print "can't stream!  stream already in progress"
+      return
+    if self.connection == 0:
+      print "can't stream!  connection not established"
       return
     self.state == 1
     url = tkSimpleDialog.askstring("Stream Website", "Url:")
