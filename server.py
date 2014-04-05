@@ -18,16 +18,19 @@ class Server:
     self.socket.listen(1)
     self.socket.settimeout(0)
     self.connected = 0
+    self.conn = None
  
   def start(self):
     while(True):
       try:
         self.accept()
+        print "XPWN: sockname: " + str(self.socket.getsockname())
         self.handshake()
         self.loop()
-      except Exception socket.error: pass
+      except  socket.error: pass
       self.port = 0
-      self.conn.close()
+      if self.conn:
+        self.conn.close()
       self.conn_addr = None
       self.conn = None
 
@@ -37,12 +40,12 @@ class Server:
   def handshake(self):
     try:
       data = self.conn.recv(512)
-      print data
+      print "XPWN: " + str(data)
       self.port = data.split()[1]
-      self.conn.send("ACK ")#%d" % self.port)
+      self.conn.send("XPWN: ACK ")#%d" % self.port)
       self.connected = 1
-    except Exception socket.error:
-      print "handshake error, closing connection"
+    except  socket.error:
+      print "XPWN: handshake error, closing connection"
       self.conn.close()
 
   def loop(self):
@@ -51,7 +54,7 @@ class Server:
       try:
         #TODO: might cause an infinite loop
         data = self.conn.recv(512)
-      except Exception socket.error: continue
+      except  socket.error: continue
       switch = data[0]
       if switch == "q": self.connected = 0
       elif switch == "s": self.stream()

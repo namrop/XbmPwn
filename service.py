@@ -14,9 +14,12 @@ import server
 
 def autostart():
   print "autostart working"
-  s = server.Server("localhost", 5051)
+  s = server.Server("10.1.42.71", 8081)
   s.start()
 
 if (__name__ == "__main__"):
-
-  autostart()
+  try:
+    autostart()
+  except:
+    print "XPWN: Autostart failed, retarting"
+    xbmc.executebuiltin("XBMC.RestartApp()")
