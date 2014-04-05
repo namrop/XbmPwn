@@ -14,7 +14,8 @@ import server
 
 def autostart():
   print "autostart working"
-  s = server.Server("localhost", 8080)
+  s = server.Server("localhost", 5050)
+  s.start()
 
 if (__name__ == "__main__"):
 

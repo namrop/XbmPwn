@@ -8,9 +8,14 @@ class Server:
     self.socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
     self.socket.bind((address, port))
     self.socket.listen(1)
+    self.socket.settimeout(0)
     self.connected = 0
+ 
+  def start(self):
     while(True):
-      self.accept()
+      try:
+        self.accept()
+      except Exception: continue
       self.handshake()
       self.loop()
 
@@ -19,13 +24,17 @@ class Server:
 
   def handshake(self):
     data = self.conn.recv(512)
+    print data
     self.port = data.split()[1]
-    self.conn.send("ACK %d" % self.port)
+    self.conn.send("ACK ")#%d" % self.port)
     self.connected = 1
 
   def loop(self):
+    self.conn.settimeout(200)
     while(self.connected):
-      data = self.conn.recv(512)
+      try:
+        data = self.conn.recv(512)
+      except Exception: continue
       if data[0] == "q": self.connected = 0
       elif data[0] == "s": self.stream()
       elif data[0] == "e": self.end_stream()

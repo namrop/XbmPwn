@@ -9,9 +9,10 @@ class Client:
   def handshake(self, port):
     self.socket.send("X_pwn %d" % port)
     self.stream_port = port
-    data = sock.recv(512)
+    data = self.socket.recv(512)
     data.split()
-    assert int(data[1]) == port
+    print data
+    #assert int(data[1]) == port
 
   def stream(self):
     self.socket.send("s")
