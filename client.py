@@ -7,18 +7,28 @@ class Client:
     self.socket.connect((dest, port))
 
   def handshake(self, port):
-    self.socket.send("X_pwn %d" % port)
-    self.stream_port = port
-    data = self.socket.recv(512)
-    data.split()
-    print data
-    #assert int(data[1]) == port
+    try:
+      self.socket.send("X_pwn %d" % port)
+      self.stream_port = port
+      data = self.socket.recv(512)
+      data.split()
+      print data
+    except Exception socket.error:
+      print "Handshake error, exiting"
+      self.socket.close()
+      #assert int(data[1]) == port
 
   def stream(self):
     self.socket.send("s")
 
-  def end_stream(self):
+  def youtube_stream(self, vid):
+    self.socket.send("y" + vid)
+
+  def stop(self):
     self.socket.send("e")
+
+  def play(self):
+    self.socket.send("p")
 
   def quit(self):
     self.socket.send("q")

@@ -1,6 +1,14 @@
 #client example
+# import the XBMC libraries so we can use the controls and functions of XBMC
 import socket
-from default import vlc_connect, youtube_connect
+import xbmc, xbmcgui
+import xbmcaddon
+import xbmcvfs
+import lib.common
+
+from lib.utils import log
+from lib.settings import get
+
 
 class Server:
 
@@ -15,33 +23,59 @@ class Server:
     while(True):
       try:
         self.accept()
-      except Exception: continue
-      self.handshake()
-      self.loop()
+        self.handshake()
+        self.loop()
+      except Exception socket.error: pass
+      self.port = 0
+      self.conn.close()
+      self.conn_addr = None
+      self.conn = None
 
   def accept(self):
     self.conn, self.conn_addr = self.socket.accept()
 
   def handshake(self):
-    data = self.conn.recv(512)
-    print data
-    self.port = data.split()[1]
-    self.conn.send("ACK ")#%d" % self.port)
-    self.connected = 1
+    try:
+      data = self.conn.recv(512)
+      print data
+      self.port = data.split()[1]
+      self.conn.send("ACK ")#%d" % self.port)
+      self.connected = 1
+    except Exception socket.error:
+      print "handshake error, closing connection"
+      self.conn.close()
 
   def loop(self):
     self.conn.settimeout(200)
     while(self.connected):
       try:
+        #TODO: might cause an infinite loop
         data = self.conn.recv(512)
-      except Exception: continue
-      if data[0] == "q": self.connected = 0
-      elif data[0] == "s": self.stream()
-      elif data[0] == "e": self.end_stream()
-    self.port = 0
-    self.conn.close()
-    self.conn_addr = None
-    self.conn = None
+      except Exception socket.error: continue
+      switch = data[0]
+      if switch == "q": self.connected = 0
+      elif switch == "s": self.stream()
+      elif switch == "e": self.stop()
+      elif switch == "p": self.play() 
+      elif switch == "y": self.youtube_connect(data[1:]) 
 
   def stream(self):
-    vlc_connect((self.conn_addr, self.port))
+    self.vlc_connect((self.conn_addr, self.port))
+
+  def vlc_connect((address, port)):
+    command = 'XBMC.PlayMedia(http://' + str(address[0]) + ':' + str(port) + ')'
+    print command
+    xbmc.executebuiltin(command)
+
+  def youtube_connect(self, vid):
+    command = 'XBMC.PlayMedia(plugin://plugin.video.youtube/?path=/root/video&action=play_video&videoid=' + vid + ')'
+    xbmc.executebuiltin(command)
+
+  def stop(self):
+    command = "XBMC.PlayerControl(Stop)"
+    xbmc.executebuiltin(command)
+
+  def play(self):
+    command = "XBMC.PlayerControl(Play)"
+    xbmc.executebuiltin(command)
+    
