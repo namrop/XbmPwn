@@ -9,12 +9,12 @@ import lib.common
 #import libraries
 from lib.settings import get
 from lib.utils import log
-setting = get()
+import server
 
 
 def autostart():
-
   print "autostart working"
+  s = server.Server("localhost", 8080)
 
 if (__name__ == "__main__"):
 
