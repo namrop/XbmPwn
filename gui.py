@@ -5,7 +5,9 @@ import os
 import subprocess
 from threading import Thread
 
-vlc_path=u"/usr/bin/vlc"
+vlc_path=u"vlc"
+correct_cmd = "vlc screen:// :screen-fps=30 :screen-caching=100 --sout '#transcode{vcodec=mp4v, acodec=ogg}:standard{access=http,mux=ogg,dst=127.0.0.1:8080}'"
+
 
 class xpwn(tk.Frame):
   def __init__(self, parent):
@@ -16,6 +18,7 @@ class xpwn(tk.Frame):
     self.dst_ip = u"127.0.0.1:8080"
 
     #TODO connect
+    self.state = 0
 
   def initialize(self):
     self.grid()
@@ -58,34 +61,50 @@ class xpwn(tk.Frame):
     self.pack()
   
   def setIP(self):
+    if self.state==1:
+      return
     self.ip = self.ip_entr.get()
+    #TODO connect
     print self.ip
   def streamFile(self):
+    if self.state==1:
+      return
     filename = askopenfilename()
     if filename==None:
       return
+    self.state = 1
     print "File: " + str(filename)
     cmd = vlc_path + " -vvv '" + filename + "' --sout=\"#standard{access=http,mux=ogg,dst=" + \
         str(self.dst_ip) + "}\""
     print "Command: " + str(cmd)
-    os.system(cmd)
-    #self.status_var.set("Status: streaming " + filename.split("/")[-1])
-  def streamDesk(self):
-    cmd = vlc_path + u" screen:// " + u":screen-fps=30 " + u":screen-caching=100 " + \
-    u"--sout=\"#standard{access=http,mux=ogg,dst=" + self.dst_ip + \
-    u"}:transcode{vcodec=mpv4,acodec=ogg}\""
-    print "Command: " + str(cmd)
-    thread = Thread(target=self.threadDesk, args=(cmd, ))
+    thread = Thread(target=self.threadExx, args=(cmd, ))
     thread.start()
-    thread.join()
-    #print "List: " + str(cmd.split())
-    #subprocess.call(cmd.split())
-    #subprocess.Popen(cmd.split())
-    #os.system(cmd)
-  def threadDesk(self, cmd):
+    self.status_var.set("Streaming File...")
+  def streamDesk(self):
+    if self.state==1:
+      return
+    self.state = 1
+    cmd = vlc_path + u" screen:// " + u":screen-fps=30 " + u":screen-caching=100 " + \
+        u"--sout '#transcode{vcodec=mpv4, acodec=ogg}:standard{access=http,mux=ogg,dst=" + self.dst_ip + \
+    u"}'"
+    print cmd
+    print correct_cmd
+    thread = Thread(target=self.threadEx, args=(cmd, ))
+    thread.start()
+    self.status_var.set("Streaming Desktop...")
+  def threadEx(self, cmd):
     os.system(cmd)
+    self.status_var.set("Status: Idle")
+    self.state = 0
   def streamWeb(self):
-    pass
+    if self.state == 1:
+      return
+    self.state == 1
+    url = tk.tkSimpleDialog.askstring("Stream Website", "Url:")
+    if(url == ""):
+      self.state = 0
+      return
+    #TODO send url over socket
   def exit(self):
     exit(0)
 
