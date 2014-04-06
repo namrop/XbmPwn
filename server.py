@@ -61,7 +61,7 @@ class Server:
       except  socket.error: continue
       if len(data) == 0:
         print "XPWN DATA len 0 and error not caught"
-        continue
+        return
       print "XPWN Data: " + data
       switch = data[0]
       if switch == "q": self.connected = 0
