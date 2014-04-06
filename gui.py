@@ -246,6 +246,7 @@ class xpwn(tk.Frame):
     thread = Thread(target=self.threadEx, args=(cmd, ))
     thread.start()
     if self.debug==0:
+      time.sleep(5)
       self.client.stream()
     self.status_var.set("Streaming " + service + " (os)")
   #### thread helper for os.system execution
