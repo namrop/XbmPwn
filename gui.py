@@ -39,6 +39,7 @@ class xpwn(tk.Frame):
     
     #TODO scan for or prompt for this
     self.server_ip = "10.1.43.172"
+    #self.server_ip = "10.1.42.71"
     self.socket_port = socket_port
     self.vlc_port = vlc_port
     # IP of this computer
@@ -209,8 +210,12 @@ class xpwn(tk.Frame):
     cmd = vlc_path 
     cmd += " -vvv \"" 
     cmd += filename 
-    #cmd += "\" --sout=\"#standard{access=http,mux=ogg,dst="
-    #cmd += str(self.client_ip) + ":" + str(self.vlc_port) + "}\""
+    cmd += "\" --sout=\"#"
+    #cmd += "transcode{cvodec=mp4v, acodec=mpga}:"
+    cmd += "standard{access=http, "
+    #cmd += "mux=ogg, "
+    cmd += "dst="
+    cmd += str(self.client_ip) + ":" + str(self.vlc_port) + "}\""
     self.exOsSys(cmd,"File")
   
   ####################################
@@ -229,9 +234,10 @@ class xpwn(tk.Frame):
     cmd += u"screen:// "
     #cmd += u":screen-fps=30 " 
     cmd += u":screen-caching=100 "
+    cmd += u"--screen-fps=20 "
     cmd += u"--sout=\"#"
-    cmd += "transcode{vcodec=mp4v, acodec=mpga}:"
-    cmd += "standard{access=http, mux=ogg,dst="
+    cmd += "transcode{vcodec=mp4v, acodec=mpga, vb=200}:"
+    cmd += "standard{access=http, mux=ogg, dst="
     cmd += self.client_ip + ":" + str(self.vlc_port)
     cmd += u"}\""
 
@@ -240,15 +246,16 @@ class xpwn(tk.Frame):
     ucmd += u" -vvv "
     ucmd += u"screen:// "
     ucmd += u":screen-caching=100 "
+    ucmd += u"--screen-fps=20 "
     ucmd += u"--sout=\"#"
-    ucmd += "transcode{vcodec=h264, acodec=mp3}:"
-    ucmd += "standard{access=udp, mux=asf, dst="
+    ucmd += "transcode{vcodec=mp4v, acodec=mpga, vb=500}:"
+    ucmd += "standard{access=mmsu, mux=asf, dst="
     ucmd += self.client_ip + ":" + str(self.vlc_port)
     ucmd += u"}\""
     # Popen for windows, os.system for linux??
     if("Windows" in this_os):
       #self.exPopenDesk()
-      self.exOsSys(cmd,"Desktop")
+      self.exOsSys(ucmd,"Desktop")
       return
     else:
       #self.exPopenDesk()

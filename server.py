@@ -76,7 +76,7 @@ class Server:
 
   def vlc_connect(self, address, port):
     print "XPWN vlc_connect"
-    command = 'XBMC.PlayMedia(http://' + str(address[0]) + ':' + str(port) + ')'
+    command = 'XBMC.PlayMedia(mms://' + str(address[0]) + ':' + str(port) + ')'
     print command
     xbmc.executebuiltin(command)
 
