@@ -7,13 +7,17 @@ import subprocess
 from threading import Thread
 import client
 import platform
+
+socket_port = 8081
+vlc_port = 5050
+
 this_os = platform.system()
 if( "Linux" in this_os):
   vlc_path="/usr/bin/vlc"
 elif( "Windows" in this_os):
   vlc_path = "vlc.exe"
   vlc_extra_path=u"C:\Program Files (x86)\VideoLAN\VLC"
-  print vlc_extra_path
+  exe_path=u"C:\Program Files (x86)\VideoLAN\VLC\\vlc.exe"
 else:
   print "UNKNOWN OS"
   exit(0)
@@ -29,18 +33,26 @@ class xpwn(tk.Frame):
 
     print socket.gethostbyname(socket.gethostname())
     print [ip for ip in socket.gethostbyname_ex(socket.gethostname())[2] if not ip.startswith("127.")][:1]
-    
+   
     self.parent = parent
+    
     #TODO scan for or prompt for this
-    self.dst_ip = "192.168.1.10:8080"
-    #TODO automatically get this
-    self.myip = "127.0.0.1:8080"
-    self.vlcport = 8080
+    self.server_ip = "192.168.1.10"
+    self.socket_port = socket_port
+    self.vlc_port = vlc_port
+    # IP of this computer
+    if "Windows" in this_os:
+      self.client_ip = socket.gethostbyname(socket.gethostname())
+    else:
+      #TODO automatically get this
+      self.client_ip = "127.0.0.1"
+    self.client_ip = "127.0.0.1"
     self.initialize()
 
   def initialize(self):
     self.connected =0
     self.state = 0
+    
     #TODO connect
 #    try:
 #      self.client = client.Client(self.dst_ip.split(":")[0],\
@@ -50,7 +62,7 @@ class xpwn(tk.Frame):
 #      print "connection failed"
 
     if self.connected == 1:
-      self.client.handshake(self.vlcport)
+      self.client.handshake(self.vlc_port)
       print self.client.socket.getsockname()[0]
 
     self.grid()
@@ -65,7 +77,7 @@ class xpwn(tk.Frame):
     self.ip_txt.grid(column=0, row=2, stick="EW", padx=px, pady=py)
 
     self.ip_str_var = tk.StringVar()
-    self.ip_str_var.set(self.dst_ip)
+    self.ip_str_var.set(self.server_ip + ":" + str(self.vlc_port))
     self.ip_entr = tk.Entry(self, textvariable=self.ip_str_var, font=20)
     self.ip_entr.grid(column=1, row=2, stick="EW", padx=px, pady=py)
    
@@ -95,7 +107,6 @@ class xpwn(tk.Frame):
     self.cancel_but = tk.Button(self, text="Cancel")
     self.cancel_but.grid(column=3, row=7, padx=px, pady=py)
 
-
     self.pack()
  
   ####################
@@ -104,20 +115,22 @@ class xpwn(tk.Frame):
     if self.state == 1:
       print "Couldn't disconnect: stream in progress"
       return
-    self.dst_ip = self.ip_entr.get()
-    print self.dst_ip
+    entr_ip = self.ip_entr.get()
+    self.server_ip = entr_ip.split(":")[0]
+    #TODO: cleanup logic
+    self.vlc_port = int(entr_ip.split(":")[1])
     if self.connected == 0:
       try:
-        self.client = client.Client(self.dst_ip.split(":")[0], \
-            int(self.dst_ip.split(":")[1]))
+        self.client = client.Client(self.server_ip, \
+            self.socket_port)
         self.connected = 1
       except socket.error:
         print "connection failed"
     elif self.connected == 1:
       self.client.quit()
       try:
-        self.client = client.Client(self.dst_ip.split(":")[0], \
-            int(self.dst_ip.split(":")[1]))
+        self.client = client.Client(self.server_ip, \
+            self.socket_port)
         self.connected = 1
       except socket.error:
         print "connection failed"
@@ -125,7 +138,7 @@ class xpwn(tk.Frame):
     if self.connected == 0:
       self.status_var.set("Disconnected")
     else:
-      check = self.client.handshake(self.vlcport)
+      check = self.client.handshake(self.vlc_port)
       if check == 1:
         self.status_var.set("Connect handshake failed")
         self.connected = 0
@@ -144,14 +157,18 @@ class xpwn(tk.Frame):
         print "can't stream!  connection not established"
         return
     self.state == 1
-    url = tkSimpleDialog.askstring("Stream Website", "Url:")
+    url = tkSimpleDialog.askstring("Stream Website Video", "Page Url:")
     if(url == ""):
       print "Oops emty url"
       self.state = 0
       return
-    video_id = url.split("=")[1].split("&")[0]
-    print "Sending url " + url + ", Youtube video " + video_id
-    self.client.youtube_stream(url.split("=")[-1])
+    if("youtube" in url.lower()):
+      video_id = url.split("=")[1].split("&")[0]
+      print "Sending url " + url + ", Youtube video " + video_id
+      self.status_var.set("Sending youtube channel...")
+      self.client.youtube_stream(url.split("=")[-1])
+    else:
+      print "Sorry only youtube videos supported atm"
     #TODO: figure out state, video finishing
  
   ###################################
@@ -175,11 +192,17 @@ class xpwn(tk.Frame):
     self.exPopenFile(filename)
     return
 
+    #TODO -vvv
+
+
     #TODO clean
     # os.system
-    cmd = vlc_path + " -vvv \"" + filename + "\" --sout=\"#standard{access=http,mux=ogg,dst=" + \
-        str(self.myip) + "}\""
-   self.exOsSys(cmd,"File")
+    cmd = vlc_path 
+    cmd += " -vvv \"" 
+    cmd += filename 
+    #cmd += "\" --sout=\"#standard{access=http,mux=ogg,dst="
+    #cmd += str(self.client_ip) + ":" + str(self.vlc_port) + "}\""
+    self.exOsSys(cmd,"File")
   
   ####################################
   # stream desktop visual
@@ -198,9 +221,9 @@ class xpwn(tk.Frame):
     cmd += u":screen-fps=30 " 
     cmd += u":screen-caching=100 "
     cmd += u"--sout=\"#"
-    cmd += "transcode{vcodec=mpv4, acodec=ogg}:"
+    #cmd += "transcode{vcodec=mpv4, acodec=ogg}:"
     cmd += "standard{access=http,mux=ogg,dst="
-    cmd += self.myip
+    cmd += self.client_ip + ":" + str(self.vlc_port)
     cmd += u"}\""
     # Popen for windows, os.system for linux??
     if("Windows" in this_os):
@@ -208,48 +231,10 @@ class xpwn(tk.Frame):
       self.exOsSys(cmd,"Desktop")
       return
     else:
-      self.exPopenDesk()
-      #self.exOsSys(cmd,"Desktop")
+      #self.exPopenDesk()
+      self.exOsSys(cmd,"Desktop")
     return
 
-  ######################################
-  # uses Popen for desktop streaming
-  def exPopenDesk(self):
-    print "EXECUTING SUBPROCESS.POPEN (desk)"
-    array = []
-    array.append(vlc_path)
-    array.append("screen://")
-    array.append("-vvv")
-    array.append(":screen-fps=30")
-    array.append(":screen-caching=100")
-    sout = "--sout=\"#"
-    #sout += "transcode{vcodec=mp4v, acodec=ogg}:"
-    sout += "standard{access=http,mux=ogg,dst=127.0.0.1:8080}\""
-    array.append(sout)
-    print array
-    if("Windows" in this_os):
-      os.chdir(vlc_extra_path)
-      p = subprocess.Popen(array)
-    else:
-      p = subprocess.Popen(array)
-    print p
-
-  ############################################
-  # uses Popen for file streaming
-  def exPopenFile(self, fname):
-    print "EXECUTING SUBPROCESS.POPEN (file)"
-    array = []
-    array.append(vlc_path)
-    array.append("-vvv")
-    array.append(fname)
-    array.append("--sout=\"#standard{access=http,mux=ogg,dst=127.0.0.1:8080}\"")
-    print array
-    if("Windows" in this_os):
-      os.chdir(vlc_extra_path)
-      p = subprocess.Popen(array, executable=vlc_extra_path)
-    else:
-      p = subprocess.Popen(array)
-    print p
 
   #########################################
   # uses os.system to execute cmd
@@ -278,6 +263,47 @@ class xpwn(tk.Frame):
     if self.connected == 1:
       self.client.quit()
     exit(0)
+  
+  ######################################
+  # uses Popen for desktop streaming
+  def exPopenDesk(self):
+    print "EXECUTING SUBPROCESS.POPEN (desk)"
+    array = []
+    array.append(vlc_path)
+    array.append("screen://")
+    array.append("-vvv")
+    array.append(":screen-fps=30")
+    array.append(":screen-caching=100")
+    sout = "--sout=\"#"
+    #sout += "transcode{vcodec=mp4v, acodec=ogg}:"
+    sout += "standard{access=http,mux=ogg,dst=127.0.0.1:8080}\""
+    array.append(sout)
+    print array
+    if("Windows" in this_os):
+      os.chdir(vlc_extra_path)
+      p = subprocess.Popen(array)
+    else:
+      p = subprocess.Popen(array)
+    print p
+
+  ############################################
+  # uses Popen for file streaming
+  def exPopenFile(self, fname):
+    print "EXECUTING SUBPROCESS.POPEN (file)"
+    array = []
+    array.append(vlc_path)
+    #array.append("-vvv")
+    array.append(fname)
+    array.append("--sout-standard-access=\"http\"")
+    array.append("--sout-standard-dst=\"127.0.0.1:5050\"")
+    #array.append("--sout=\"#standard{access=http,mux=ogg,dst=127.0.0.1:8080}\"")
+    print array
+    if("Windows" in this_os):
+      os.chdir(vlc_extra_path)
+      p = subprocess.Popen(array, executable=vlc_extra_path)
+    else:
+      p = subprocess.Popen(array)
+    print p
 
 if __name__ == "__main__":
   top = tk.Tk()
