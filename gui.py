@@ -7,7 +7,6 @@ import subprocess
 from threading import Thread
 import client
 import platform
-import discover
 
 socket_port = 8081
 vlc_port = 5050
@@ -46,6 +45,7 @@ class xpwn(tk.Frame):
       self.client_ip = socket.gethostbyname(socket.gethostname())
     else:
       #TODO automatically get this
+      import discover
       self.client_ip = discover.find_ip_linux()
     self.initialize()
 
@@ -271,13 +271,14 @@ class xpwn(tk.Frame):
     array = []
     array.append(vlc_path)
     array.append("screen://")
-    array.append("-vvv")
+    #array.append("-vvv")
     array.append(":screen-fps=30")
     array.append(":screen-caching=100")
     array.append("--sout-transcode-vcodec=\"mp4v\"")
     array.append("--sout-transcode-acodec=\"ogg\"")
     array.append("--sout-standard-access=\"http\"")
-    array.append("--sout-standard-dst=\"" + self.client_ip + ":" + str(self.vlc_port) + "\"")
+    array.append("--sout-standard-mux=\"ogg\"")
+    array.append("--sout-standard-url=\"" + self.client_ip + ":" + str(self.vlc_port) + "\"")
     #sout = "--sout=\"#"
     #sout += "transcode{vcodec=mp4v, acodec=ogg}:"
     #sout += "standard{access=http,mux=ogg,dst=127.0.0.1:8080}\""
@@ -301,7 +302,7 @@ class xpwn(tk.Frame):
     array.append(fname)
     array.append("--sout-standard-access=\"http\"")
     array.append("--sout-standard-dst=\"" + self.client_ip + ":" + str(self.vlc_port) + "\"")
-    array.append("--logfile vlclog.txt")
+    array.append("--logfile=\"vlclog.txt\"")
     #array.append("--sout=\"#standard{access=http,mux=ogg,dst=127.0.0.1:8080}\"")
     print array
     if("Windows" in this_os):
