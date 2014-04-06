@@ -37,7 +37,7 @@ class xpwn(tk.Frame):
     self.parent = parent
     
     #TODO scan for or prompt for this
-    self.server_ip = "192.168.1.10"
+    self.server_ip = "10.1.43.127"
     self.socket_port = socket_port
     self.vlc_port = vlc_port
     # IP of this computer
@@ -46,7 +46,7 @@ class xpwn(tk.Frame):
     else:
       #TODO automatically get this
       self.client_ip = "127.0.0.1"
-    self.client_ip = "127.0.0.1"
+    #self.client_ip = "127.0.0.1"
     self.initialize()
 
   def initialize(self):
@@ -274,10 +274,13 @@ class xpwn(tk.Frame):
     array.append("-vvv")
     array.append(":screen-fps=30")
     array.append(":screen-caching=100")
-    sout = "--sout=\"#"
+    array.append("--sout-standard-access=\"http\"")
+    array.append("--sout-standard-dst=\"127.0.0.1:5050\"")
+    array.append("--sout-transcode-vcodec=\"mp4v\"")
+    #sout = "--sout=\"#"
     #sout += "transcode{vcodec=mp4v, acodec=ogg}:"
-    sout += "standard{access=http,mux=ogg,dst=127.0.0.1:8080}\""
-    array.append(sout)
+    #sout += "standard{access=http,mux=ogg,dst=127.0.0.1:8080}\""
+    #array.append(sout)
     print array
     if("Windows" in this_os):
       os.chdir(vlc_extra_path)
@@ -300,10 +303,9 @@ class xpwn(tk.Frame):
     print array
     if("Windows" in this_os):
       os.chdir(vlc_extra_path)
-      p = subprocess.Popen(array, executable=vlc_extra_path)
+      p = subprocess.Popen(array, executable=exe_path)
     else:
       p = subprocess.Popen(array)
-    print p
 
 if __name__ == "__main__":
   top = tk.Tk()
