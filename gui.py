@@ -224,7 +224,7 @@ class xpwn(tk.Frame):
     cmd += u":screen-caching=100 "
     cmd += u"--sout=\"#"
     #cmd += "transcode{vcodec=mpv4, acodec=ogg}:"
-    cmd += "standard{access=http,mux=ogg,url="
+    cmd += "standard{access=http,mux=ogg,dst="
     cmd += self.client_ip + ":" + str(self.vlc_port)
     cmd += u"}\""
     # Popen for windows, os.system for linux??
