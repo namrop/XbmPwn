@@ -15,9 +15,9 @@ find_ip_linux()
 
 def discover_servers():
 
-  UDP_IP = "127.0.0.1"
+  UDP_IP = "<broadcast>"
   UDP_PORT = 5005
-  MESSAGE = "Hello, World!"
+  MESSAGE = "XbmPwn client"
 
   print "UDP target IP:", UDP_IP
   print "UDP target port:", UDP_PORT
@@ -25,5 +25,8 @@ def discover_servers():
 
   sock = socket.socket(socket.AF_INET, # Internet
                      socket.SOCK_DGRAM) # UDP
-  sock.setsockopt(socket.SOL_SOCKET, socket.SO_BROADCAST)
+  sock.setsockopt(socket.SOL_SOCKET, socket.SO_BROADCAST, 1)
+  sock.bind(('', UDP_PORT))
   sock.sendto(MESSAGE, (UDP_IP, UDP_PORT))
+
+  
