@@ -7,6 +7,7 @@ import subprocess
 from threading import Thread
 import client
 import platform
+import discover
 
 socket_port = 8081
 vlc_port = 5050
@@ -45,8 +46,7 @@ class xpwn(tk.Frame):
       self.client_ip = socket.gethostbyname(socket.gethostname())
     else:
       #TODO automatically get this
-      self.client_ip = "127.0.0.1"
-    self.client_ip = "127.0.0.1"
+      self.client_ip = discover.find_ip_linux()
     self.initialize()
 
   def initialize(self):
