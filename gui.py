@@ -230,8 +230,8 @@ class xpwn(tk.Frame):
     #cmd += u":screen-fps=30 " 
     cmd += u":screen-caching=100 "
     cmd += u"--sout=\"#"
-    cmd += "transcode{vcodec=mp4v, acodec=mp4a}:"
-    cmd += "standard{access=http,mux=mp4,dst="
+    cmd += "transcode{vcodec=mp4v, acodec=mpga}:"
+    cmd += "standard{access=http, mux=ogg,dst="
     cmd += self.client_ip + ":" + str(self.vlc_port)
     cmd += u"}\""
 
@@ -241,7 +241,7 @@ class xpwn(tk.Frame):
     ucmd += u":screen-caching=100 "
     ucmd += u"--sout=\"#"
     ucmd += "transcode{vcodec=h264, acodec=mp3}:"
-    ucmd += "standard{access=udp,mux=asf,dst="
+    ucmd += "standard{access=udp, mux=asf, dst="
     ucmd += self.client_ip + ":" + str(self.vlc_port)
     ucmd += u"}\""
     # Popen for windows, os.system for linux??
