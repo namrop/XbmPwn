@@ -28,7 +28,7 @@ else:
 class xpwn(tk.Frame):
   def __init__(self, parent):
     #TODO set debug to 0
-    self.debug = 1
+    self.debug = 0
     tk.Frame.__init__(self, parent)
 
     print socket.gethostbyname(socket.gethostname())
@@ -288,6 +288,8 @@ class xpwn(tk.Frame):
       p = subprocess.Popen(array)
     else:
       p = subprocess.Popen(array)
+    if self.debug==0:
+      self.client.stream()
 
   ############################################
   # uses Popen for file streaming
@@ -307,6 +309,8 @@ class xpwn(tk.Frame):
       p = subprocess.Popen(array, executable=exe_path)
     else:
       p = subprocess.Popen(array)
+    if self.debug == 0:
+      self.client.stream()
 
 if __name__ == "__main__":
   top = tk.Tk()
