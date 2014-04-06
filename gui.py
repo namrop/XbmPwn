@@ -247,7 +247,7 @@ class xpwn(tk.Frame):
     # Popen for windows, os.system for linux??
     if("Windows" in this_os):
       #self.exPopenDesk()
-      self.exOsSys(ucmd,"Desktop")
+      self.exOsSys(cmd,"Desktop")
       return
     else:
       #self.exPopenDesk()
