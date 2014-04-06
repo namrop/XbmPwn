@@ -38,8 +38,8 @@ class xpwn(tk.Frame):
     self.parent = parent
     
     #TODO scan for or prompt for this
-    self.server_ip = "10.1.43.172"
-    #self.server_ip = "10.1.42.71"
+    #self.server_ip = "10.1.43.172"
+    self.server_ip = "10.1.42.71"
     self.socket_port = socket_port
     self.vlc_port = vlc_port
     # IP of this computer
@@ -245,17 +245,17 @@ class xpwn(tk.Frame):
     ucmd = vlc_path
     ucmd += u" -vvv "
     ucmd += u"screen:// "
-    ucmd += u":screen-caching=100 "
+    ucmd += u":screen-caching=200 "
     ucmd += u"--screen-fps=20 "
     ucmd += u"--sout=\"#"
-    ucmd += "transcode{vcodec=mp4v, acodec=mpga, vb=500}:"
-    ucmd += "standard{access=mmsu, mux=asf, dst="
+    ucmd += "transcode{vcodec=mp4v, acodec=mpga, vb=300}:"
+    ucmd += "std{access=mms, mux=asf, dst="
     ucmd += self.client_ip + ":" + str(self.vlc_port)
     ucmd += u"}\""
     # Popen for windows, os.system for linux??
     if("Windows" in this_os):
       #self.exPopenDesk()
-      self.exOsSys(ucmd,"Desktop")
+      self.exOsSys(cmd,"Desktop")
       return
     else:
       #self.exPopenDesk()
