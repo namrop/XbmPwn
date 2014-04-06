@@ -17,6 +17,7 @@ if( "Linux" in this_os):
 elif( "Windows" in this_os):
   vlc_path = "vlc.exe"
   vlc_extra_path=u"C:\Program Files (x86)\VideoLAN\VLC"
+  exe_path=u"C:\Program Files (x86)\VideoLAN\VLC\\vlc.exe"
 else:
   print "UNKNOWN OS"
   exit(0)
@@ -191,13 +192,16 @@ class xpwn(tk.Frame):
     self.exPopenFile(filename)
     return
 
+    #TODO -vvv
+
+
     #TODO clean
     # os.system
     cmd = vlc_path 
     cmd += " -vvv \"" 
     cmd += filename 
-    cmd += "\" --sout=\"#standard{access=http,mux=ogg,dst="
-    cmd += str(self.client_ip) + ":" + str(self.vlc_port) + "}\""
+    #cmd += "\" --sout=\"#standard{access=http,mux=ogg,dst="
+    #cmd += str(self.client_ip) + ":" + str(self.vlc_port) + "}\""
     self.exOsSys(cmd,"File")
   
   ####################################
@@ -219,7 +223,7 @@ class xpwn(tk.Frame):
     cmd += u"--sout=\"#"
     #cmd += "transcode{vcodec=mpv4, acodec=ogg}:"
     cmd += "standard{access=http,mux=ogg,dst="
-    cmd += self.client_ip
+    cmd += self.client_ip + ":" + str(self.vlc_port)
     cmd += u"}\""
     # Popen for windows, os.system for linux??
     if("Windows" in this_os):
@@ -288,9 +292,11 @@ class xpwn(tk.Frame):
     print "EXECUTING SUBPROCESS.POPEN (file)"
     array = []
     array.append(vlc_path)
-    array.append("-vvv")
+    #array.append("-vvv")
     array.append(fname)
-    array.append("--sout=\"#standard{access=http,mux=ogg,dst=127.0.0.1:8080}\"")
+    array.append("--sout-standard-access=\"http\"")
+    array.append("--sout-standard-dst=\"127.0.0.1:5050\"")
+    #array.append("--sout=\"#standard{access=http,mux=ogg,dst=127.0.0.1:8080}\"")
     print array
     if("Windows" in this_os):
       os.chdir(vlc_extra_path)
