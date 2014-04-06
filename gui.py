@@ -7,6 +7,7 @@ import subprocess
 from threading import Thread
 import client
 import platform
+import time
 
 socket_port = 5051
 vlc_port = 8080
