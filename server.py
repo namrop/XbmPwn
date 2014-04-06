@@ -1,4 +1,4 @@
-#client example
+#client examplue
 # import the XBMC libraries so we can use the controls and functions of XBMC
 import socket
 import xbmc, xbmcgui
@@ -76,7 +76,7 @@ class Server:
 
   def vlc_connect(self, address, port):
     print "XPWN vlc_connect"
-    command = 'XBMC.PlayMedia(http://' + str(address[0]) + ':' + str(port) + ')'
+    command = 'XBMC.PlayMedia(udp://' + str(address[0]) + ':' + str(port) + ')'
     print command
     xbmc.executebuiltin(command)
 
