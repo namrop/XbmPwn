@@ -79,7 +79,7 @@ class xpwn(tk.Frame):
     self.ip_txt.grid(column=0, row=2, stick="EW", padx=px, pady=py)
 
     self.ip_str_var = tk.StringVar()
-    self.ip_str_var.set(self.server_ip + ":" + str(self.vlc_port))
+    self.ip_str_var.set(self.server_ip + ":" + str(self.socket_port))
     self.ip_entr = tk.Entry(self, textvariable=self.ip_str_var, font=20)
     self.ip_entr.grid(column=1, row=2, stick="EW", padx=px, pady=py)
    
@@ -120,7 +120,7 @@ class xpwn(tk.Frame):
     entr_ip = self.ip_entr.get()
     self.server_ip = entr_ip.split(":")[0]
     #TODO: cleanup logic
-    self.vlc_port = int(entr_ip.split(":")[1])
+    self.socket_port = int(entr_ip.split(":")[1])
     if self.connected == 0:
       try:
         self.client = client.Client(self.server_ip, \
