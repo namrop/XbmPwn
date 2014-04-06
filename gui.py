@@ -8,8 +8,8 @@ from threading import Thread
 import client
 import platform
 
-socket_port = 8081
-vlc_port = 5050
+socket_port = 5051
+vlc_port = 8080
 
 this_os = platform.system()
 if( "Linux" in this_os):
@@ -54,12 +54,13 @@ class xpwn(tk.Frame):
     self.state = 0
     
     #TODO connect
-#    try:
-#      self.client = client.Client(self.dst_ip.split(":")[0],\
-#          int(self.dst_ip.split(":")[1]))
-#      self.connected = 1
-#    except socket.error:
-#      print "connection failed"
+    try:
+      self.client = client.Client(self.server_ip,\
+          self.socket_port)
+      self.connected = 1
+    except socket.error, e:
+      print "connection failed " + str(e)
+      print self.server_ip, self.socket_port
 
     if self.connected == 1:
       self.client.handshake(self.vlc_port)
@@ -124,16 +125,16 @@ class xpwn(tk.Frame):
         self.client = client.Client(self.server_ip, \
             self.socket_port)
         self.connected = 1
-      except socket.error:
-        print "connection failed"
+      except socket.error, e:
+        print "connection failed " + str(e)
     elif self.connected == 1:
       self.client.quit()
       try:
         self.client = client.Client(self.server_ip, \
             self.socket_port)
         self.connected = 1
-      except socket.error:
-        print "connection failed"
+      except socket.error, e:
+        print "connection failed " + str(e)
         self.connected = 0
     if self.connected == 0:
       self.status_var.set("Disconnected")
@@ -290,6 +291,7 @@ class xpwn(tk.Frame):
     else:
       p = subprocess.Popen(array)
     if self.debug==0:
+      time.sleep(5)
       self.client.stream()
 
   ############################################

@@ -5,6 +5,7 @@ class Client:
   def __init__(self, dest, port):
     self.socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
     self.socket.connect((dest, port))
+    print "client init " + dest + " " + str(port)
     self.shook = 0
 
   def handshake(self, port):
