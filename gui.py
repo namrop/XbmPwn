@@ -230,8 +230,8 @@ class xpwn(tk.Frame):
     #cmd += u":screen-fps=30 " 
     cmd += u":screen-caching=100 "
     cmd += u"--sout=\"#"
-    cmd += "transcode{vcodec=h264, acodec=mpga}:"
-    cmd += "standard{access=http,mux=ts,dst="
+    cmd += "transcode{vcodec=mp4v, acodec=mp4a}:"
+    cmd += "standard{access=http,mux=mp4,dst="
     cmd += self.client_ip + ":" + str(self.vlc_port)
     cmd += u"}\""
 
