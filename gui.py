@@ -29,7 +29,7 @@ else:
 class xpwn(tk.Frame):
   def __init__(self, parent):
     #TODO set debug to 0
-    self.debug = 1
+    self.debug = 0
     tk.Frame.__init__(self, parent)
 
     print socket.gethostbyname(socket.gethostname())
@@ -38,7 +38,7 @@ class xpwn(tk.Frame):
     self.parent = parent
     
     #TODO scan for or prompt for this
-    self.server_ip = "192.168.1.10"
+    self.server_ip = "10.1.43.127"
     self.socket_port = socket_port
     self.vlc_port = vlc_port
     # IP of this computer
@@ -227,12 +227,12 @@ class xpwn(tk.Frame):
     cmd += u"}\""
     # Popen for windows, os.system for linux??
     if("Windows" in this_os):
-      #self.exPopenDesk()
-      self.exOsSys(cmd,"Desktop")
+      self.exPopenDesk()
+      #self.exOsSys(cmd,"Desktop")
       return
     else:
-      #self.exPopenDesk()
-      self.exOsSys(cmd,"Desktop")
+      self.exPopenDesk()
+      #self.exOsSys(cmd,"Desktop")
     return
 
 
@@ -274,17 +274,22 @@ class xpwn(tk.Frame):
     array.append("-vvv")
     array.append(":screen-fps=30")
     array.append(":screen-caching=100")
-    sout = "--sout=\"#"
+    array.append("--sout-transcode-vcodec=\"mp4v\"")
+    array.append("--sout-transcode-acodec=\"ogg\"")
+    array.append("--sout-standard-access=\"http\"")
+    array.append("--sout-standard-dst=\"" + self.client_ip + ":" + str(self.vlc_port) + "\"")
+    #sout = "--sout=\"#"
     #sout += "transcode{vcodec=mp4v, acodec=ogg}:"
-    sout += "standard{access=http,mux=ogg,dst=127.0.0.1:8080}\""
-    array.append(sout)
+    #sout += "standard{access=http,mux=ogg,dst=127.0.0.1:8080}\""
+    #array.append(sout)
     print array
     if("Windows" in this_os):
       os.chdir(vlc_extra_path)
       p = subprocess.Popen(array)
     else:
       p = subprocess.Popen(array)
-    print p
+    if self.debug==0:
+      self.client.stream()
 
   ############################################
   # uses Popen for file streaming
@@ -295,15 +300,17 @@ class xpwn(tk.Frame):
     #array.append("-vvv")
     array.append(fname)
     array.append("--sout-standard-access=\"http\"")
-    array.append("--sout-standard-dst=\"127.0.0.1:5050\"")
+    array.append("--sout-standard-dst=\"" + self.client_ip + ":" + str(self.vlc_port) + "\"")
+    array.append("--logfile vlclog.txt")
     #array.append("--sout=\"#standard{access=http,mux=ogg,dst=127.0.0.1:8080}\"")
     print array
     if("Windows" in this_os):
       os.chdir(vlc_extra_path)
-      p = subprocess.Popen(array, executable=vlc_extra_path)
+      p = subprocess.Popen(array, executable=exe_path)
     else:
       p = subprocess.Popen(array)
-    print p
+    if self.debug == 0:
+      self.client.stream()
 
 if __name__ == "__main__":
   top = tk.Tk()
