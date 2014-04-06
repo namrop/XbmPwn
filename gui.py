@@ -76,17 +76,22 @@ class xpwn(tk.Frame):
 
     self.title = tk.Label(self, text='X_Pwn', font=40)
     self.title.grid(column=0, row=0, columnspan=5, stick="EW", padx=px, pady=py)
-    
+   
+    self.spacer = tk.Label(self, text=".     .")
+    self.spacer.grid(column=0, row=0, rowspan=6)
+    self.spacer2 = tk.Label(self, text=".     .")
+    self.spacer2.grid(column=4, row=0, rowspan=6)
+
     self.ip_txt = tk.Label(self, text="R-Pi IP: ", font=20)
-    self.ip_txt.grid(column=0, row=2, stick="EW", padx=px, pady=py)
+    self.ip_txt.grid(column=1, row=2, stick="EW", padx=1, pady=py)
 
     self.ip_str_var = tk.StringVar()
     self.ip_str_var.set(self.server_ip + ":" + str(self.socket_port))
     self.ip_entr = tk.Entry(self, textvariable=self.ip_str_var, font=20)
-    self.ip_entr.grid(column=1, row=2, stick="EW", padx=px, pady=py)
+    self.ip_entr.grid(column=2, row=2,  stick="EW", padx=1, pady=py)
    
     self.ip_but = tk.Button(self, text="Set IP", command=self.setIP, font=20)
-    self.ip_but.grid(column=2, row=2, stick="EW", padx=px, pady=py)
+    self.ip_but.grid(column=3, row=2, stick="EW", padx=1, pady=py)
 
     self.stream_file = tk.Button(self, text="Stream File", command=self.streamFile, font=20)
     self.stream_file.grid(column=1, row=3, columnspan=3, stick="EW", padx=px, pady=py)
