@@ -220,7 +220,7 @@ class xpwn(tk.Frame):
     cmd = vlc_path
     cmd += u" -vvv "
     cmd += u"screen:// "
-    cmd += u":screen-fps=30 " 
+    #cmd += u":screen-fps=30 " 
     cmd += u":screen-caching=100 "
     cmd += u"--sout=\"#"
     cmd += "transcode{vcodec=mpv4, acodec=ogg}:"
