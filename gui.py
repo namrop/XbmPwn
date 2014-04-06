@@ -10,7 +10,7 @@ import platform
 import time
 
 socket_port = 8081
-vlc_port = 1234
+vlc_port = 5050
 
 this_os = platform.system()
 if( "Linux" in this_os):
@@ -240,7 +240,7 @@ class xpwn(tk.Frame):
     ucmd += u"screen:// "
     ucmd += u":screen-caching=100 "
     ucmd += u"--sout=\"#"
-    ucmd += "transcode{vcodec=h264, acodec=mpga}:"
+    ucmd += "transcode{vcodec=h264, acodec=mp3}:"
     ucmd += "standard{access=udp,mux=asf,dst="
     ucmd += self.client_ip + ":" + str(self.vlc_port)
     ucmd += u"}\""
