@@ -38,7 +38,7 @@ class xpwn(tk.Frame):
     self.parent = parent
     
     #TODO scan for or prompt for this
-    self.server_ip = "10.1.42.71"
+    self.server_ip = "10.1.43.172"
     self.socket_port = socket_port
     self.vlc_port = vlc_port
     # IP of this computer
@@ -235,6 +235,7 @@ class xpwn(tk.Frame):
     cmd += self.client_ip + ":" + str(self.vlc_port)
     cmd += u"}\""
 
+    #just for udp tests; ignore ucmd
     ucmd = vlc_path
     ucmd += u" -vvv "
     ucmd += u"screen:// "
