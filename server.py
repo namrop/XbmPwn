@@ -36,7 +36,7 @@ class Server:
       self.conn = None
 
   def accept(self):
-    print "XPWN accept"
+    #print "XPWN accept"
     self.conn, self.conn_addr = self.socket.accept()
 
   def handshake(self):

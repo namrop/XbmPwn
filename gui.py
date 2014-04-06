@@ -10,7 +10,7 @@ import platform
 import time
 
 socket_port = 8081
-vlc_port = 5050
+vlc_port = 1234
 
 this_os = platform.system()
 if( "Linux" in this_os):
@@ -38,7 +38,7 @@ class xpwn(tk.Frame):
     self.parent = parent
     
     #TODO scan for or prompt for this
-    self.server_ip = "10.1.43.127"
+    self.server_ip = "10.1.42.71"
     self.socket_port = socket_port
     self.vlc_port = vlc_port
     # IP of this computer
@@ -48,6 +48,7 @@ class xpwn(tk.Frame):
       #TODO automatically get this
       import discover
       self.client_ip = discover.find_ip_linux()
+    #self.client_ip = "127.0.0.1"
     self.initialize()
 
   def initialize(self):
@@ -55,13 +56,14 @@ class xpwn(tk.Frame):
     self.state = 0
     
     #TODO connect
-    try:
-      self.client = client.Client(self.server_ip,\
-          self.socket_port)
-      self.connected = 1
-    except socket.error, e:
-      print "connection failed " + str(e)
-      print self.server_ip, self.socket_port
+    if self.debug==0:
+      try:
+        self.client = client.Client(self.server_ip,\
+            self.socket_port)
+        self.connected = 1
+      except socket.error, e:
+        print "connection failed " + str(e)
+        print self.server_ip, self.socket_port
 
     if self.connected == 1:
       self.client.handshake(self.vlc_port)
@@ -223,14 +225,24 @@ class xpwn(tk.Frame):
     #cmd += u":screen-fps=30 " 
     cmd += u":screen-caching=100 "
     cmd += u"--sout=\"#"
-    cmd += "transcode{vcodec=mpv4, acodec=ogg}:"
-    cmd += "standard{access=http,mux=ogg,dst="
+    cmd += "transcode{vcodec=h264, acodec=mpga}:"
+    cmd += "standard{access=http,mux=ts,dst="
     cmd += self.client_ip + ":" + str(self.vlc_port)
     cmd += u"}\""
+
+    ucmd = vlc_path
+    ucmd += u" -vvv "
+    ucmd += u"screen:// "
+    ucmd += u":screen-caching=100 "
+    ucmd += u"--sout=\"#"
+    ucmd += "transcode{vcodec=h264, acodec=mpga}:"
+    ucmd += "standard{access=udp,mux=asf,dst="
+    ucmd += self.client_ip + ":" + str(self.vlc_port)
+    ucmd += u"}\""
     # Popen for windows, os.system for linux??
     if("Windows" in this_os):
       #self.exPopenDesk()
-      self.exOsSys(cmd,"Desktop")
+      self.exOsSys(ucmd,"Desktop")
       return
     else:
       #self.exPopenDesk()
