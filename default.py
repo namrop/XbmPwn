@@ -8,7 +8,7 @@ from lib.utils import log
 from lib.settings import get
 
 def vlc_connect((address, port)):
-  command = 'XBMC.PlayMedia(http://' + str(address) + ':' + str(port) + ')'
+  command = 'XBMC.PlayMedia(http://' + str(address[0]) + ':' + str(port) + ')'
   print command
   xbmc.executebuiltin(command)
 
