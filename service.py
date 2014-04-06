@@ -5,6 +5,7 @@ import xbmc
 import xbmcaddon
 import xbmcvfs
 import lib.common
+from discover import find_ip_linux
 
 #import libraries
 from lib.settings import get
@@ -14,7 +15,7 @@ import server
 
 def autostart():
   print "autostart working"
-  s = server.Server("10.1.42.71", 8081)
+  s = server.Server(find_ip_linux(), 8081)
   s.start()
 
 if (__name__ == "__main__"):
