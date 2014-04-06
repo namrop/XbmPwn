@@ -21,6 +21,7 @@ def autostart():
 if (__name__ == "__main__"):
   try:
     autostart()
-  except:
+  except Exception, e:
     print "XPWN: Autostart failed, retarting"
+    print "XPWN: " + str(e)
     xbmc.executebuiltin("XBMC.RestartApp()")
