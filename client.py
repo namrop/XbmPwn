@@ -5,6 +5,7 @@ class Client:
   def __init__(self, dest, port):
     self.socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
     self.socket.connect((dest, port))
+    self.shook = 0
 
   def handshake(self, port):
     try:
@@ -13,10 +14,13 @@ class Client:
       data = self.socket.recv(512)
       data.split()
       print data
+      self.shook = 1
+      return 0
     except socket.error:
       print "Handshake error, exiting"
       self.socket.close()
       #assert int(data[1]) == port
+      return 1
 
   def stream(self):
     self.socket.send("s")
